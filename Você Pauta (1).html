@@ -1,0 +1,817 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Você Pauta</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,700&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+/* Layout: uma folha de zine sobre uma mesa pontilhada. Cada página tem folio de verdade.
+   A capa abre com o título em letras recortadas; o resto fica quieto, em tinta e papel. */
+:root{
+  --paper:#E5E7E2; --sheet:#F2F3EF; --ink:#15161C; --muted:#585B65; --dot:#D2D5CE;
+  --blue:#2B3FD6; --on-blue:#FFFFFF;
+  --pink:#FF4F87; --on-pink:#15161C;
+  --hl:#F6E24B; --on-hl:#15161C; --mark:#F6E24B;
+  --f-display:'Bowlby One','Arial Black',Impact,sans-serif;
+  --f-body:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --f-type:'Special Elite','Courier New',monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#13141A; --sheet:#1D1F27; --ink:#ECEDE7; --muted:#A3A6B0; --dot:#1B1D25;
+    --blue:#8795FF; --on-blue:#0E1020;
+    --pink:#FF6E9C; --on-pink:#15161C;
+    --hl:#E9D54A; --on-hl:#15161C; --mark:#5C5214;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#13141A; --sheet:#1D1F27; --ink:#ECEDE7; --muted:#A3A6B0; --dot:#1B1D25;
+  --blue:#8795FF; --on-blue:#0E1020;
+  --pink:#FF6E9C; --on-pink:#15161C;
+  --hl:#E9D54A; --on-hl:#15161C; --mark:#5C5214;
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{
+  background-color:var(--paper);
+  background-image:radial-gradient(var(--dot) 1.1px,transparent 1.4px);
+  background-size:7px 7px;
+  color:var(--ink);
+  font-family:var(--f-body);
+  font-size:18px;
+  line-height:1.55;
+  overflow-wrap:break-word;
+  padding-block:20px 28px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+a,button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.sheet{
+  max-width:800px;margin-inline:auto;
+  background:var(--sheet);
+  border:2px solid var(--ink);
+  box-shadow:6px 6px 0 var(--ink);
+  padding:clamp(16px,4vw,38px);
+}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+
+/* topo */
+.top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.5rem 1.4rem;
+  border-bottom:2px solid var(--ink);padding-bottom:.85rem;margin-bottom:1.6rem}
+.mark-logo{font-family:var(--f-display);font-size:1.15rem;color:var(--ink);text-decoration:none;padding:.3rem 0}
+nav{display:flex;flex-wrap:wrap;gap:.1rem .7rem;font-family:var(--f-type);font-size:.92rem;text-transform:uppercase;letter-spacing:.05em}
+nav a{color:var(--ink);text-decoration:none;padding:.5rem .3rem}
+nav a[aria-current="page"]{background:var(--mark)}
+@media (hover:hover){nav a:hover{text-decoration:underline;text-underline-offset:3px}}
+
+/* tipografia */
+.view{display:flex;flex-direction:column;gap:1.15rem}
+.view p,.view li{max-width:64ch}
+h1,h2,h3{font-weight:400;margin:0}
+h2{font-family:var(--f-display);font-size:clamp(1.6rem,5.6vw,2.3rem);line-height:1.12;text-wrap:balance}
+h3{font-family:var(--f-display);font-size:clamp(1.25rem,4.4vw,1.7rem);line-height:1.12;text-wrap:balance}
+.mk{background:linear-gradient(transparent 60%,var(--mark) 60%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.kicker{font-family:var(--f-type);font-size:.86rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+.lead{font-size:1.28rem;line-height:1.45;margin:0}
+.folio{font-family:var(--f-type);color:var(--muted);text-align:right;border-top:2px solid var(--ink);padding-top:.5rem;margin:.6rem 0 0;max-width:none!important;font-size:.9rem}
+p{margin:0}
+
+/* botões */
+.btn{
+  font-family:var(--f-type);font-size:.95rem;letter-spacing:.05em;text-transform:uppercase;line-height:1.3;
+  background:var(--sheet);color:var(--ink);
+  border:2px solid var(--ink);padding:.7rem 1.05rem;min-height:46px;
+  box-shadow:4px 4px 0 var(--ink);cursor:pointer;text-decoration:none;display:inline-block;
+  transition:transform .08s,box-shadow .08s;
+}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn.primary{background:var(--pink);color:var(--on-pink)}
+@media (hover:hover){.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}.btn:active:hover{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}}
+.link{font-family:var(--f-type);font-size:.92rem;letter-spacing:.04em;text-transform:uppercase;background:none;border:0;color:var(--ink);
+  text-decoration:underline;text-underline-offset:4px;cursor:pointer;padding:.7rem 0;min-height:44px;align-self:flex-start}
+.cta{display:flex;flex-wrap:wrap;gap:1rem}
+
+/* chips */
+.chip{font-family:var(--f-type);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;padding:.1rem .5rem;border:1.5px solid var(--ink);line-height:1.5;display:inline-block}
+.chip.tema{background:var(--hl);color:var(--on-hl)}
+.chip.q{background:var(--blue);color:var(--on-blue)}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem}
+
+/* capa */
+.ransom{display:flex;flex-direction:column;align-items:flex-start;gap:.45rem;line-height:1;margin:.3rem 0 .2rem}
+.ransom .line{display:flex;flex-wrap:wrap;gap:.3rem}
+.t{display:inline-block;font-size:clamp(2.4rem,12.5vw,6.2rem);line-height:1;padding:.07em .13em .03em;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);
+  transform:translateY(var(--y,0)) rotate(var(--r,0deg))}
+.t1{font-family:var(--f-display);background:var(--ink);color:var(--sheet);--r:-3deg}
+.t2{font-family:var(--f-type);background:var(--hl);color:var(--on-hl);--r:2deg;--y:.06em}
+.t3{font-family:var(--f-body);font-weight:700;font-style:italic;background:var(--pink);color:var(--on-pink);--r:-2deg}
+.t4{font-family:var(--f-display);background:var(--sheet);color:var(--ink);--r:3deg;--y:-.05em}
+.t5{font-family:var(--f-body);font-weight:700;background:var(--blue);color:var(--on-blue);--r:2deg}
+.t6{font-family:var(--f-display);background:var(--sheet);color:var(--ink);--r:-3deg;--y:.05em}
+.t7{font-family:var(--f-type);background:var(--pink);color:var(--on-pink);--r:2deg}
+.t8{font-family:var(--f-display);background:var(--ink);color:var(--sheet);--r:-2deg;--y:-.04em}
+.t9{font-family:var(--f-body);font-weight:700;font-style:italic;background:var(--hl);color:var(--on-hl);--r:3deg}
+.tape{font-family:var(--f-type);font-size:.88rem;background:var(--mark);display:inline-block;padding:.2rem .6rem;transform:rotate(-1.2deg);align-self:flex-start;max-width:100%}
+.toc{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.3rem}
+.toc a{display:flex;align-items:baseline;gap:.6rem;color:var(--ink);text-decoration:none;font-size:1.08rem;padding:.4rem 0}
+.toc i{flex:1;min-width:1rem;border-bottom:2px dotted var(--ink);transform:translateY(-.25rem)}
+.toc b{font-family:var(--f-type);font-weight:400}
+@media (hover:hover){.toc a:hover span{text-decoration:underline;text-underline-offset:4px}}
+
+/* como funciona */
+.steps{margin:0;padding-left:1.4rem;display:flex;flex-direction:column;gap:.7rem}
+.steps li::marker{font-family:var(--f-display)}
+.box{border:2px solid var(--ink);padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.9rem}
+dl{margin:0;display:flex;flex-direction:column;gap:.9rem}
+dt{margin:0}
+dd{margin:.3rem 0 0;max-width:62ch}
+.flow{display:flex;flex-wrap:wrap;gap:.5rem .35rem;align-items:center;font-family:var(--f-type);text-transform:uppercase;font-size:.85rem;letter-spacing:.04em}
+.flow span{border:2px solid var(--ink);padding:.25rem .6rem;background:var(--sheet)}
+.flow span.you{background:var(--pink);color:var(--on-pink)}
+.flow em{font-style:normal}
+.flowcap{font-family:var(--f-type);font-size:.82rem;color:var(--muted)}
+
+/* casos */
+#casos-body{display:flex;flex-direction:column;gap:1.15rem}
+.ficha-list{display:flex;flex-direction:column;gap:1.3rem}
+.ficha{border:2px solid var(--ink);padding:1.1rem 1.2rem;display:flex;flex-direction:column;align-items:flex-start;gap:.75rem}
+.origem{font-style:italic;color:var(--muted);font-size:1rem}
+.prog{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+.ptxt{font-family:var(--f-type);font-size:.85rem;color:var(--muted)}
+.sqs{display:inline-flex;gap:.3rem}
+.sq{width:1.05rem;height:1.05rem;border:2px solid var(--ink);display:inline-block;flex:none}
+.sq.on{background:var(--pink)}
+.reader{display:flex;flex-direction:column;gap:1.15rem;min-width:0}
+.reader:focus{outline:none}
+.storytext{display:flex;flex-direction:column;gap:.9rem;font-size:1.14rem;max-width:62ch}
+.ask{font-family:var(--f-type);text-transform:uppercase;letter-spacing:.06em;font-size:.95rem;margin-top:.3rem}
+.choices{display:grid;gap:1rem}
+.choice{
+  display:grid;grid-template-columns:auto 1fr;gap:.9rem;align-items:center;text-align:left;width:100%;
+  font-family:var(--f-body);font-size:1.08rem;font-weight:600;line-height:1.35;
+  background:var(--sheet);color:var(--ink);border:2px solid var(--ink);padding:.8rem .9rem;min-height:56px;
+  box-shadow:4px 4px 0 var(--ink);cursor:pointer;transition:transform .08s,box-shadow .08s;
+}
+.choice:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+@media (hover:hover){.choice:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}.choice:active:hover{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}}
+.choice .L{font-family:var(--f-display);font-weight:400;font-size:1.3rem;width:2.5rem;height:2.5rem;display:grid;place-items:center;background:var(--ink);color:var(--sheet)}
+.trailbox{border-top:2px dashed var(--ink);padding-top:.9rem;display:flex;flex-direction:column;gap:.5rem}
+.trail{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.8rem}
+.trail li{display:flex;flex-direction:column;gap:.35rem;max-width:62ch}
+.trail .tt{font-size:1rem}
+
+/* capa de jornal */
+.frontwrap{max-width:100%}
+.front{
+  border:2px solid var(--ink);padding:1rem 1.1rem 1.2rem;background:var(--sheet);
+  background-image:radial-gradient(var(--dot) 1px,transparent 1.3px);background-size:6px 6px;
+  box-shadow:5px 5px 0 var(--ink);display:flex;flex-direction:column;gap:.8rem;
+}
+.mast{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.2rem 1rem;border-bottom:4px double var(--ink);padding-bottom:.5rem}
+.mast .name{font-family:var(--f-display);font-size:1.05rem;text-transform:uppercase}
+.mast .date{font-family:var(--f-type);font-size:.82rem}
+.stamp{align-self:flex-start;font-family:var(--f-type);font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;background:var(--pink);color:var(--on-pink);border:2px solid var(--ink);padding:.1rem .55rem;transform:rotate(-2deg)}
+.manchete{font-family:var(--f-display);font-weight:400;font-size:clamp(1.35rem,4.8vw,2.05rem);line-height:1.1;text-wrap:balance}
+.fina{font-style:italic;font-size:1.08rem;max-width:56ch}
+.napauta{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;border-top:2px solid var(--ink);padding-top:.6rem;max-width:none!important}
+.napauta .lbl{font-family:var(--f-type);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
+.note{font-family:var(--f-type);font-size:.88rem;color:var(--muted)}
+.finds{margin:0;padding:0;list-style:none;display:grid;gap:.4rem}
+.finds li{display:flex;align-items:center;gap:.6rem;font-size:1rem}
+.finds li.off{color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:1rem}
+
+/* notícia real */
+.reveal{border-top:2px dashed var(--ink);padding-top:1rem;display:flex;flex-direction:column;gap:.9rem;scroll-margin-top:12px}
+.news{
+  border:2px solid var(--ink);padding:1rem 1.1rem 1.2rem;background:var(--sheet);
+  box-shadow:5px 5px 0 var(--ink);display:flex;flex-direction:column;gap:.85rem;min-width:0;
+}
+.news .src{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.2rem 1rem;border-bottom:4px double var(--ink);padding-bottom:.5rem;font-family:var(--f-type);font-size:.85rem;text-transform:uppercase;letter-spacing:.04em}
+.news .body{display:flex;flex-direction:column;gap:.85rem;font-size:1.08rem}
+.news .body p{max-width:64ch}
+.news a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}
+
+/* mande a sua */
+form{display:flex;flex-direction:column;gap:1rem}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:1rem}
+.field{display:flex;flex-direction:column;gap:.3rem;min-width:0}
+label,.lab{font-family:var(--f-type);font-size:.88rem;letter-spacing:.05em;text-transform:uppercase}
+input[type=text],textarea{
+  font:inherit;font-size:16px;width:100%;min-width:0;background:var(--sheet);color:var(--ink);
+  border:2px solid var(--ink);padding:.6rem .65rem;border-radius:0;
+}
+textarea{resize:vertical;line-height:1.45}
+.check{display:flex;gap:.6rem;align-items:flex-start;font-family:var(--f-body);text-transform:none;letter-spacing:0;font-size:1rem}
+.check input{margin-top:.35rem;width:1.1rem;height:1.1rem;accent-color:var(--blue);flex:none}
+textarea.out{font-family:var(--f-type);font-size:16px}
+.status{font-family:var(--f-type);font-size:.88rem;color:var(--muted);min-height:1.3em}
+
+.fine{font-size:.9rem;color:var(--muted);margin-top:1.4rem;max-width:64ch}
+
+@media (max-width:560px){
+  body{font-size:17px;padding-block:14px 22px}
+  .sheet{box-shadow:4px 4px 0 var(--ink)}
+  .cta .btn,.actions .btn{flex:1 1 100%;text-align:center}
+  .ficha{padding:1rem}
+  .front,.news{padding:.9rem .9rem 1.1rem}
+  .choice{gap:.7rem;padding:.75rem}
+  .choice .L{width:2.2rem;height:2.2rem;font-size:1.1rem}
+}
+@media (prefers-reduced-motion:reduce){
+  .btn,.choice{transition:none}
+}
+</style>
+
+<div class="sheet">
+  <header class="top">
+    <a class="mark-logo" href="#capa">Você Pauta</a>
+    <nav aria-label="Páginas da zine">
+      <a href="#capa" data-nav="capa">Capa</a>
+      <a href="#como" data-nav="como">Como funciona</a>
+      <a href="#casos" data-nav="casos">Casos</a>
+      <a href="#mande" data-nav="mande">Mande a sua</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- p. 1 -->
+    <section class="view" data-view="capa" hidden>
+      <p class="kicker">Zine interativa · Edição nº 2 · <span class="hoje"></span></p>
+      <h1 class="ransom" aria-label="Você Pauta">
+        <span class="line" aria-hidden="true"><span class="t t1">V</span><span class="t t2">O</span><span class="t t3">C</span><span class="t t4">Ê</span></span>
+        <span class="line" aria-hidden="true"><span class="t t5">P</span><span class="t t6">A</span><span class="t t7">U</span><span class="t t8">T</span><span class="t t9">A</span></span>
+      </h1>
+      <p class="tape">Formato inspirado em Você Decide, da TV Globo</p>
+      <p class="lead">Cada história parte de uma notícia real, com nomes e lugares escondidos. Você faz as escolhas, a pauta do dia muda com elas e, no fim, a notícia de verdade aparece.</p>
+      <div class="cta">
+        <a class="btn primary" href="#casos">Escolher um caso</a>
+        <a class="btn" href="#como">Como funciona</a>
+      </div>
+      <h2 style="font-size:1.25rem;margin-top:.6rem"><span class="mk">Nesta edição</span></h2>
+      <ol class="toc">
+        <li><a href="#como"><span>Como funciona</span><i></i><b>p. 2</b></a></li>
+        <li><a href="#casos"><span>Três casos para decidir</span><i></i><b>p. 3</b></a></li>
+        <li><a href="#mande"><span>Mande a sua</span><i></i><b>p. 4</b></a></li>
+      </ol>
+      <p class="folio">p. 1</p>
+    </section>
+
+    <!-- p. 2 -->
+    <section class="view" data-view="como" hidden>
+      <h2><span class="mk">Como funciona</span></h2>
+      <div class="box">
+        <h3>A ideia</h3>
+        <p><i>Você Pauta</i> é uma zine interativa que junta o formato do programa <i>Você Decide</i>, da TV Globo, com a teoria do agendamento (<i>agenda-setting</i>). Cada caso parte de uma notícia real, contada com nomes e lugares trocados. O leitor faz duas escolhas e chega a um de quatro finais. No fim, a notícia de verdade é revelada.</p>
+        <p>A teoria diz que a mídia define sobre o que o público pensa (tema, o primeiro nível) e a partir de qual ângulo (enquadramento, o segundo nível). No <i>Você Decide</i>, o público escolhia o final, mas só entre as opções que a emissora tinha preparado. Na zine, o leitor vira o <i>gatekeeper</i>: cada decisão põe um tema em destaque e deixa outros de fora. O final vira uma capa de jornal, e o botão de trocar o enquadramento mostra que o mesmo fato muda de sentido conforme a manchete.</p>
+        <p>Ao revelar a notícia real, o leitor compara a pauta que ele construiu com a que foi publicada. A pergunta que fica é: quem decidiu o que você achou importante?</p>
+      </div>
+      <ol class="steps">
+        <li><b>Leia o caso.</b> Cada história parte de uma notícia real, contada com nomes e lugares trocados. Você não sabe qual é.</li>
+        <li><b>Decida.</b> Em dois momentos do caso, você escolhe entre duas opções.</li>
+        <li><b>Veja a capa.</b> O final vira a primeira página de um jornal. Você pode trocar o enquadramento e ler a mesma notícia por outro ângulo.</li>
+        <li><b>Descubra a notícia.</b> No fim, a matéria que deu origem ao caso aparece como foi publicada, com o link.</li>
+      </ol>
+
+      <div class="box">
+        <h3>Agendamento em poucas linhas</h3>
+        <p>A teoria do agendamento, ou agenda-setting, foi formulada por Maxwell McCombs e Donald Shaw em 1972, num estudo com eleitores durante uma campanha presidencial. Ela retoma uma ideia atribuída a Bernard Cohen: a imprensa pouco consegue dizer às pessoas o que pensar, mas indica com força sobre o que pensar.</p>
+        <dl>
+          <div><dt><span class="chip tema">Tema</span></dt><dd>Primeiro nível. O assunto que ganha destaque na pauta. Na zine, cada decisão põe um tema em primeiro plano.</dd></div>
+          <div><dt><span class="chip q">Enquadramento</span></dt><dd>Segundo nível. O ângulo que descreve o tema e escolhe quais atributos aparecem. É o que muda entre duas manchetes sobre o mesmo fato.</dd></div>
+          <div><dt><span class="chip">Gatekeeper</span></dt><dd>Quem decide o que entra e o que fica de fora. Nesta zine, é você.</dd></div>
+        </dl>
+      </div>
+
+      <div>
+        <div class="flow" role="img" aria-label="Fato, depois pauta (sua decisão), enquadramento, capa e público">
+          <span>Fato</span><em>→</em><span class="you">Pauta</span><em>→</em><span>Enquadramento</span><em>→</em><span>Capa</span><em>→</em><span>Público</span>
+        </div>
+        <p class="flowcap" style="margin-top:.4rem">A etapa em rosa é a sua. É ali que o gatekeeper decide.</p>
+      </div>
+
+      <div class="cta"><a class="btn primary" href="#casos">Escolher um caso</a></div>
+      <p class="folio">p. 2</p>
+    </section>
+
+    <!-- p. 3 -->
+    <section class="view" data-view="casos" hidden>
+      <h2><span class="mk">Casos para decidir</span></h2>
+      <p>Três situações baseadas em notícias reais. Cada uma tem quatro finais. Tente encontrar todos e descubra de que notícia saiu cada caso.</p>
+      <div id="casos-body"></div>
+      <p class="folio">p. 3</p>
+    </section>
+
+    <!-- p. 4 -->
+    <section class="view" data-view="mande" hidden>
+      <h2><span class="mk">Mande a sua</span></h2>
+      <p>Os casos desta edição partem de notícias. Os das próximas podem partir de relatos de leitores. Se você viveu, ou viu de perto, uma decisão difícil, conte aqui. O texto abaixo se monta enquanto você escreve, pronto para copiar e enviar.</p>
+      <p>Troque nomes e detalhes que identifiquem pessoas.</p>
+      <form id="mande-form" autocomplete="off">
+        <div class="grid2">
+          <div class="field"><label for="m-nome">Seu primeiro nome (opcional)</label><input type="text" id="m-nome"></div>
+          <div class="field"><label for="m-local">Bairro e cidade</label><input type="text" id="m-local" placeholder="Ex.: Alto da XV, Curitiba"></div>
+        </div>
+        <div class="field"><label for="m-fato">O que aconteceu</label><textarea id="m-fato" rows="4" placeholder="Conte a situação em poucas linhas."></textarea></div>
+        <div class="field"><label for="m-decisao">Qual foi o momento de decidir</label><textarea id="m-decisao" rows="2" placeholder="O ponto em que a história poderia ter ido para lados diferentes."></textarea></div>
+        <div class="grid2">
+          <div class="field"><label for="m-a">Opção A</label><textarea id="m-a" rows="2"></textarea></div>
+          <div class="field"><label for="m-b">Opção B</label><textarea id="m-b" rows="2"></textarea></div>
+        </div>
+        <div class="field"><label for="m-fim">Como terminou na vida real</label><textarea id="m-fim" rows="2"></textarea></div>
+        <label class="check" for="m-ok"><input type="checkbox" id="m-ok" checked> <span>Pode virar um caso da zine, com nomes trocados.</span></label>
+        <div class="field">
+          <label for="m-out">Relato montado</label>
+          <textarea id="m-out" class="out" rows="12" readonly></textarea>
+        </div>
+        <div class="cta">
+          <button type="button" class="btn primary" id="m-copy">Copiar relato</button>
+          <button type="button" class="btn" id="m-clear">Limpar</button>
+        </div>
+        <p class="status" id="m-status" role="status"></p>
+      </form>
+      <p class="folio">p. 4</p>
+    </section>
+  </main>
+
+  <p class="fine">Os casos partem de notícias reais, mas as histórias, os nomes, os lugares e os finais mostrados antes da revelação são inventados. A matéria publicada aparece no fim de cada caso, com a fonte.</p>
+</div>
+
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+
+  function h(tag,attrs){
+    var el=document.createElement(tag);
+    var a=attrs||{};
+    Object.keys(a).forEach(function(k){
+      var v=a[k];
+      if(k==='class') el.className=v;
+      else if(k.indexOf('on')===0) el.addEventListener(k.slice(2),v);
+      else if(v!==false&&v!=null) el.setAttribute(k,v);
+    });
+    var kids=Array.prototype.slice.call(arguments,2);
+    (function add(list){
+      list.forEach(function(kid){
+        if(kid==null||kid===false) return;
+        if(Array.isArray(kid)) add(kid);
+        else el.append(kid.nodeType?kid:document.createTextNode(kid));
+      });
+    })(kids);
+    return el;
+  }
+  function toTop(){
+    try{window.scrollTo(0,0);}catch(e){}
+    try{document.documentElement.scrollTop=0;document.body.scrollTop=0;}catch(e){}
+  }
+
+  /* ---------- dados dos casos ---------- */
+  var ORIGEM='Baseado em uma notícia real. Qual? Só no final.';
+  var STORIES=[
+    {
+      id:'galho', titulo:'Estalo ao meio-dia', origem:ORIGEM,
+      temas:['Cidade','Segurança'],
+      real:{
+        fonte:'g1 Paraná · 23 out 2026',
+        titulo:'Queda de galho deixa ferido na Praça Osório, em Curitiba, pela terceira vez em menos de quatro meses',
+        fina:'Homem teve ferimentos no tornozelo, foi atendido pelo Corpo de Bombeiros e encaminhado ao hospital.',
+        paras:[
+          ['A queda de um galho deixou um homem de 24 anos ferido nesta sexta-feira (23), na Praça Osório, em ',{a:'Curitiba',h:'https://g1.globo.com/pr/parana/cidade/curitiba/'},'. É a terceira vez que isso acontece em menos de quatro meses no mesmo local. ',{a:'A prefeitura decidiu interditar a praça.',h:'https://g1.globo.com/pr/parana/noticia/2026/10/23/praca-osorio-sera-interditada-para-obras.ghtml'}],
+          ['Pedestres que passavam pelo local começaram o socorro ao homem. Em seguida, a Guarda Municipal e o Corpo de Bombeiros foram acionados para atendê-lo. Ele teve ferimentos no tornozelo e foi levado ao hospital.'],
+          ['Um banco de madeira também foi atingido e ficou danificado. Equipes da prefeitura foram ao local para fazer a retirada do galho e a poda da árvore.'],
+          ['Em junho, a jovem Ana Beatriz Cruz, de 22 anos, ',{a:'ficou paraplégica ao ser atingida por um galho',h:'https://g1.globo.com/pr/parana/noticia/2026/06/18/video-queda-de-galho-praca-curitiba.ghtml'},' enquanto visitava uma feira na praça. No último sábado (17), a queda de um grande galho ',{a:'deixou uma mulher ferida e um carro danificado',h:'https://g1.globo.com/pr/parana/noticia/2026/10/17/quatro-meses-apos-jovem-ficar-paraplegica-queda-de-novo-galho-deixa-mulher-ferida-e-atinge-carro-na-praca-osorio-em-curitiba.ghtml'},'. Depois disso, a prefeitura afirmou que não irá realizar mais feiras na praça até o fim do El Niño, por precaução.'],
+          ['O prefeito Eduardo Pimentel (PSD) anunciou que a Praça Osório será isolada e que os pedestres não poderão passar por dentro da praça até que a prefeitura conclua ',{a:'obras de revitalização na praça',h:'https://g1.globo.com/pr/parana/noticia/2026/10/23/praca-osorio-sera-interditada-para-obras.ghtml'},'. Segundo ele, as obras estavam previstas para fevereiro, mas a prefeitura pretende antecipá-las. Os trabalhos só devem ser concluídos no ano que vem.']
+        ],
+        url:'https://g1.globo.com/pr/parana/noticia/2026/10/23/queda-de-galho-deixa-ferido-na-praca-osorio-em-curitiba.ghtml'
+      },
+      nodes:{
+        n0:{t:[
+          "Sexta-feira, 12h40. Caio sai do trabalho com a marmita e atravessa a Praça das Figueiras, como faz todos os dias. Ouve um estalo seco, olha para cima e vê um galho despencar a poucos metros.",
+          "Um homem de vinte e poucos anos fica caído ao lado de um banco de madeira, agarrando o tornozelo. Três pessoas já correm para ajudar, e uma delas liga para o resgate. Em minutos chegam a Guarda Municipal e os bombeiros.",
+          "Caio gravou, sem pensar, os últimos segundos da queda. Também sabe, porque trabalha ali, que não é a primeira vez que um galho cai naquela praça."],
+          c:[
+            {r:"Ficar, contar à Guarda o que viu e falar com a repórter que chegou",to:'n1a',tema:'Segurança',q:'Testemunho'},
+            {r:"Voltar ao trabalho e postar o vídeo da queda",to:'n1b',tema:'Cidade',q:'Viralização'}]},
+        n1a:{t:[
+          "Os bombeiros imobilizam o tornozelo do homem e o levam ao hospital. O banco de madeira ficou rachado. Funcionários da prefeitura chegam com serra e escada para tirar o galho.",
+          "Uma repórter de rádio, que estava na praça, pergunta a Caio se ele viu tudo e se já tinha acontecido antes. Ele lembra de duas outras quedas nos últimos meses, e uma delas deixou uma jovem gravemente ferida. Mas não tem certeza das datas."],
+          c:[
+            {r:"Dizer que é a terceira vez e que a prefeitura já sabia do risco",to:'fim_cerca',tema:'Segurança',q:'Alerta'},
+            {r:"Contar só o que viu hoje, sem apontar culpados",to:'fim_poda',tema:'Cidade',q:'Caso isolado'}]},
+        n1b:{t:[
+          "No escritório, Caio sobe o vídeo e escreve: mais um galho caindo na praça, dessa vez machucou alguém. Em duas horas, são oito mil visualizações. Alguns comentam que já viram o mesmo em outras praças. Outros pedem que a prefeitura explique.",
+          "Um assessor da prefeitura manda mensagem pedindo que Caio apague o vídeo até a situação ser esclarecida. Do outro lado, um vereador compartilha o vídeo."],
+          c:[
+            {r:"Manter o vídeo no ar e marcar a prefeitura",to:'fim_laudo',tema:'Cidade',q:'Cobrança'},
+            {r:"Apagar o vídeo, que ficou maior do que ele queria",to:'fim_silencio',tema:'Cidade',q:'Silêncio'}]},
+        fim_cerca:{fim:true,titulo:'Praça cercada',t:[
+          "A matéria sai no fim da tarde com a fala de Caio: era a terceira queda em poucos meses. À noite, o prefeito anuncia que a praça será isolada e que ninguém poderá passar por dentro dela até a conclusão das obras.",
+          "As obras de revitalização estavam marcadas para o começo do ano seguinte, mas a prefeitura diz que vai antecipá-las. A feira que acontecia na praça também fica suspensa. Para Caio, o caminho do almoço agora dá a volta no quarteirão."],
+          manchete:"Terceira queda de galho em poucos meses faz prefeito isolar praça e antecipar obras",
+          linha:"A área só será reaberta com a conclusão da revitalização, prevista para o ano seguinte.",
+          tema:'Segurança',q:'Alerta',
+          alt:{q:'Cidade fechada',manchete:"Praça cercada: moradores ganham segurança e perdem o espaço público",linha:"A mesma decisão, agora com foco no que a cidade deixa de ter enquanto as obras não terminam."}},
+        fim_poda:{fim:true,titulo:'Poda e esquecimento',t:[
+          "A matéria sai curta: homem ferido na praça, atendido pelos bombeiros, encaminhado ao hospital. A prefeitura poda a árvore no mesmo dia e diz que o local é vistoriado com frequência.",
+          "Em dois dias, ninguém mais fala no assunto. A praça segue aberta, a feira segue de pé. Caio continua atravessando todo dia, mas agora olha para cima."],
+          manchete:"Homem é ferido por queda de galho em praça; prefeitura poda a árvore",
+          linha:"A queda foi atendida pelos bombeiros e a poda foi feita ainda na sexta-feira.",
+          tema:'Cidade',q:'Caso isolado',
+          alt:{q:'Recorrência',manchete:"De novo? Quedas de galho na mesma praça pedem uma pergunta que a poda não responde",linha:"O mesmo episódio, agora com foco em por que a recorrência não vira pauta."}},
+        fim_laudo:{fim:true,titulo:'Vídeo e laudo',t:[
+          "O vídeo passa de cem mil visualizações no fim de semana. Na segunda-feira, uma comissão da Câmara pede o laudo técnico de todas as árvores da praça e a prefeitura promete entregá-lo em trinta dias.",
+          "Caio recebe convites de entrevista que não esperava. Alguns elogiam. Outros dizem que ele só queria aparecer."],
+          manchete:"Vídeo de queda de galho viraliza e Câmara cobra laudo das árvores da praça",
+          linha:"A prefeitura promete entregar a avaliação técnica em trinta dias.",
+          tema:'Cidade',q:'Cobrança',
+          alt:{q:'Exposição',manchete:"Quem filma, responde? Morador vira alvo de elogios e críticas após vídeo de queda",linha:"O mesmo vídeo, agora com foco em quem o publicou."}},
+        fim_silencio:{fim:true,titulo:'Vídeo apagado',t:[
+          "Caio apaga o vídeo à noite. Alguém já tinha salvo uma cópia, que circula em grupos por mais dois dias sem origem nem contexto.",
+          "Sem o vídeo, a imprensa publica uma nota curta. A prefeitura não comenta as outras quedas. Ninguém liga os três episódios, e a praça continua aberta."],
+          manchete:"Vídeo de queda de galho circula sem origem; prefeitura não comenta episódios anteriores",
+          linha:"A cópia compartilhada em grupos não permite saber quando e onde a gravação foi feita.",
+          tema:'Cidade',q:'Silêncio',
+          alt:{q:'Memória',manchete:"Vídeo some, assunto some: o que acontece quando ninguém junta as pontas?",linha:"O mesmo episódio, agora com foco em quem conecta os fatos."}}
+      }
+    },
+    {
+      id:'tres-meses', titulo:'Três meses', origem:ORIGEM,
+      temas:['Famosos','Privacidade'],
+      real:{
+        fonte:'g1 Pop & Arte · 27 out 2026',
+        titulo:'MC Paiva e Soso Careca anunciam que estão à espera do primeiro filho: "3 meses com o amor mais puro"',
+        fina:'',
+        paras:[
+          ['O funkeiro MC Paiva e a influenciadora Sophia Florence, conhecida como Soso Careca, anunciaram, em uma postagem nas redes sociais, que estão à espera do primeiro filho. "3 meses com o amor mais puro que existe", escreveu o casal em um post.'],
+          ['O casal mostrou a foto do ultrassom do bebê, mas não revelou o sexo da criança. Nos comentários, os fãs parabenizaram o casal, mas também manifestaram surpresa com a novidade. MC Paiva já tem dois filhos de relacionamento anterior.'],
+          ['Eles anunciaram publicamente o romance em janeiro de 2026. ',{a:'Em julho, o casal chegou a anunciar o término na relação ',h:'https://g1.globo.com/pop-arte/noticia/2026/07/17/mc-paiva-termina-namoro-com-soso-careca-apos-live-com-malevola-fui-o-ultimo-a-saber.ghtml'},'após a aproximação da influencer com ',{a:'Malévola Alves, com quem eles haviam se envolvido em uma polêmica meses antes.',h:'https://g1.globo.com/pop-arte/noticia/2026/04/30/mc-paiva-e-malevola-entenda-briga-envolvendo-cabelo-de-r-6-mil-pancadaria-em-cinema-e-transfobia.ghtml'}],
+          ['Mas dias depois, durante uma live, os dois declararam que foi uma briga boba e que haviam reatado a relação.'],
+          ['O atrito com Malévola foi gerado após a influencer realizar um procedimento de luzes com o cabeleireiro Robson Souza e criticar o atendimento recebido.'],
+          ['A defesa do profissional ganhou apoio de outras influenciadoras, incluindo Soso Careca, que se manifestou contra a postura de Malévola e afirmou que "não se pode atribuir preço ao trabalho alheio".'],
+          ['MC Paiva também entrou na discussão e trocou mensagens com Malévola. A influenciadora, então, publicou prints da conversa e acusou o cantor de transfobia.'],
+          ['A situação terminou em uma briga generalizada em um cinema de um shopping na Zona Leste de São Paulo. Meses depois da confusão, Sophia e Malévola apareceram juntas em uma transmissão ao vivo nas redes sociais.'],
+          ['A aproximação desagradou MC Paiva, que afirmou ter ficado magoado com a situação.'],
+          ['"Não gostei, não achei da hora o que aconteceu hoje. Não gosto de ser o último a saber, ainda mais de uma situação chata que aconteceu, de uma covardia que eu e a Sofia sofremos. Entrei em uma briga que não era minha e entraria de novo para defender a mulher que eu amo", disse.']
+        ],
+        url:'https://g1.globo.com/pop-arte/noticia/2026/10/27/mc-paiva-e-soso-careca-anunciam-que-estao-a-espera-do-primeiro-filho-3-meses-com-o-amor-mais-puro.ghtml'
+      },
+      nodes:{
+        n0:{t:[
+          "Terça-feira, 15h10. Júlia edita a seção de entretenimento de um portal. O celular vibra: um cantor e uma influenciadora, muito seguidos, acabaram de postar a foto de um ultrassom. A legenda diz que são três meses com o amor mais puro que existe.",
+          "A foto passa de cem mil curtidas em poucos minutos. Os comentários misturam parabéns e surpresa, porque o casal passou por um término público no meio do ano e voltou dias depois. O cantor já é pai de duas crianças.",
+          "Júlia precisa decidir o que vai ao ar antes que os concorrentes publiquem."],
+          c:[
+            {r:"Publicar só o anúncio, com a foto e as palavras do casal",to:'n1a',tema:'Famosos',q:'Celebração'},
+            {r:"Publicar o anúncio com todo o histórico do casal",to:'n1b',tema:'Famosos',q:'Histórico'}]},
+        n1a:{t:[
+          "A matéria sai em quinze minutos, curta, com a foto do ultrassom e a frase do casal. Os comentários do portal se enchem de felicitações, mas alguns leitores perguntam por que nada foi dito sobre o término e sobre a polêmica do começo do ano.",
+          "O chefe de Júlia manda mensagem: a concorrência incluiu o histórico e está com o dobro de acessos."],
+          c:[
+            {r:"Atualizar a matéria com um parágrafo de contexto",to:'fim_contexto',tema:'Famosos',q:'Contexto'},
+            {r:"Manter a matéria curta e respeitar o momento do casal",to:'fim_curta',tema:'Privacidade',q:'Respeito'}]},
+        n1b:{t:[
+          "Júlia monta a matéria com linha do tempo: o romance assumido no começo do ano, o término em julho, a volta dias depois e a briga com uma terceira influenciadora, que terminou em acusação de preconceito e confusão em público.",
+          "O chefe gosta e quer um título forte. O jurídico pergunta se o trecho da acusação está bem atribuído, porque envolve uma terceira pessoa."],
+          c:[
+            {r:"Título sobre a gravidez e histórico no corpo do texto",to:'fim_bebe',tema:'Famosos',q:'Celebração'},
+            {r:"Título que puxa a polêmica, que é o que dá clique",to:'fim_polemica',tema:'Famosos',q:'Polêmica'}]},
+        fim_contexto:{fim:true,titulo:'Contexto depois',t:[
+          "Júlia acrescenta um parágrafo no fim da matéria com o histórico em poucas linhas. Os acessos sobem, mas aparecem comentários pedindo para deixar o casal em paz.",
+          "No dia seguinte, a assessoria do casal escreve ao portal pedindo que o parágrafo seja revisado. O chefe quer manter."],
+          manchete:"Cantor e influenciadora anunciam que esperam o primeiro filho",
+          linha:"A matéria foi atualizada com o histórico do relacionamento.",
+          tema:'Famosos',q:'Contexto',
+          alt:{q:'Atualização',manchete:"Matéria muda depois de publicada: o que se acrescenta, e por quê?",linha:"O mesmo texto, agora com foco na decisão de editar depois que o público reage."}},
+        fim_curta:{fim:true,titulo:'Respeito ao momento',t:[
+          "A matéria fica curta e sem histórico. Perde acessos para os concorrentes, mas ganha elogios nos comentários.",
+          "Na semana seguinte, o chefe pede números: a seção ficou abaixo da meta. Júlia mostra os comentários e pergunta o que o portal quer ser."],
+          manchete:"Casal anuncia que espera o primeiro filho",
+          linha:"O anúncio foi feito nas redes sociais, com foto de ultrassom e mensagem do casal.",
+          tema:'Privacidade',q:'Respeito',
+          alt:{q:'Omissão',manchete:"Quando não se conta o histórico, o que o leitor deixa de saber?",linha:"A mesma notícia, agora com foco no que ficou de fora."}},
+        fim_bebe:{fim:true,titulo:'Bebê na manchete',t:[
+          "O título fala da gravidez e o histórico fica no corpo do texto, com a acusação atribuída a quem a fez e com a versão do outro lado. O jurídico aprova.",
+          "A matéria tem bons acessos e poucas reclamações. No fim da semana, ninguém lembra qual portal publicou primeiro."],
+          manchete:"Casal que reatou em julho anuncia que espera o primeiro filho",
+          linha:"O texto traz o histórico do relacionamento e a briga de meses atrás, com as versões de cada lado.",
+          tema:'Famosos',q:'Celebração',
+          alt:{q:'Histórico',manchete:"Entre o término e o ultrassom: a trajetória do casal em seis meses",linha:"O mesmo texto, agora com foco na linha do tempo."}},
+        fim_polemica:{fim:true,titulo:'Polêmica no título',t:[
+          "O título puxa a briga e a acusação. O texto sobe nos acessos e nas redes, e a conversa deixa de ser sobre o bebê.",
+          "Na manhã seguinte, a assessoria do casal pede a retirada de um trecho, e a terceira pessoa envolvida na polêmica pede direito de resposta."],
+          manchete:"Após briga e acusação de preconceito, casal anuncia gravidez",
+          linha:"A notícia da gravidez aparece depois da polêmica no texto.",
+          tema:'Famosos',q:'Polêmica',
+          alt:{q:'Gravidez',manchete:"Casal espera filho, e o assunto vira outra coisa",linha:"O mesmo texto, agora com foco no que o título tirou de cena."}}
+      }
+    },
+    {
+      id:'reuniao', titulo:'Reunião às 15h30', origem:ORIGEM,
+      temas:['Educação','Transparência'],
+      real:{
+        fonte:'Plural Jornalismo · Educação',
+        titulo:'Depois de negar, Prefeitura de Curitiba confirma fim do 6º ao 9º anos horas antes de reunião com pais',
+        fina:'Famílias estão mobilizadas há uma semana contra a medida; encontro com a Secretaria Municipal da Educação está marcado para as 15h30 desta quinta-feira (29), na Rua da Cidadania do CIC',
+        paras:[
+          ['A Prefeitura de Curitiba confirmou nesta quinta-feira (29) que vai deixar de oferecer os anos finais do Ensino Fundamental, do 6º ao 9º anos, nas escolas da rede municipal. A transição para a rede estadual começa em 2027 e deve se completar em quatro anos. O anúncio foi publicado no site da prefeitura antes da reunião que a Secretaria Municipal da Educação marcou com pais de alunos para as 15h30 de hoje, na Rua da Cidadania do CIC. Ou seja, as famílias chegam ao encontro com a decisão já tomada e divulgada.'],
+          ['A confirmação contradiz o que a própria secretaria vinha dizendo. Diante de questionamentos, a Secretaria Municipal da Educação negou repetidas vezes que o fim das turmas estivesse decidido e afirmava que a medida estava apenas em estudo.'],
+          ['A decisão enfrenta forte resistência dos pais. Há uma semana, famílias de estudantes das escolas afetadas estão mobilizadas para tentar reverter o fim da oferta dos anos finais na rede municipal.']
+        ],
+        url:'https://www.plural.jor.br/educacao/depois-de-negar-prefeitura-de-curitiba-confirma-fim-do-6o-ao-9o-anos-horas-antes-de-reuniao-com-pais/'
+      },
+      nodes:{
+        n0:{t:[
+          "Quinta-feira, 11h. Helena tem um filho no 7º ano de uma escola municipal. Há uma semana, o grupo de pais da escola vive em alerta por causa de um boato: a prefeitura vai deixar de oferecer os anos finais do fundamental, e os alunos seriam levados para a rede do estado.",
+          "Ela perguntou duas vezes à secretaria de Educação. Nas duas, a resposta foi a mesma: não há decisão, é só um estudo. Para hoje, às 15h30, a secretaria marcou uma reunião com os pais no centro comunitário do bairro.",
+          "Às 11h, Helena ainda não sabe o que vai encontrar na reunião. Pode ir até lá ou procurar a imprensa antes."],
+          c:[
+            {r:"Ir à reunião e pedir a palavra",to:'n1a',tema:'Educação',q:'Participação'},
+            {r:"Procurar um jornal antes da reunião",to:'n1b',tema:'Transparência',q:'Imprensa'}]},
+        n1a:{t:[
+          "Helena chega ao centro comunitário às 15h. Na fila de entrada, uma mãe lhe mostra o celular: a prefeitura acaba de publicar no próprio site que os anos finais deixam de ser oferecidos nas escolas municipais. A mudança começa no ano que vem e termina em quatro anos, com os alunos indo para a rede do estado.",
+          "A decisão foi publicada horas antes da reunião. O que a secretaria chamava de estudo estava, ao que tudo indica, decidido."],
+          c:[
+            {r:"Entrar, pedir a palavra e cobrar a diferença entre o que foi dito e o que foi decidido",to:'fim_cobranca',tema:'Educação',q:'Participação'},
+            {r:"Sair da reunião e convocar um ato em frente à prefeitura no dia seguinte",to:'fim_ato',tema:'Educação',q:'Mobilização'}]},
+        n1b:{t:[
+          "A repórter de um jornal independente atende o telefone de Helena em dez minutos. Ela já recebeu mensagens de outros pais e quer entender o que a secretaria disse nos últimos dias.",
+          "Helena guardou os prints do grupo de pais com as respostas da secretaria negando a decisão. A repórter diz que pode usar o material, mas precisa de um nome para atribuir as falas."],
+          c:[
+            {r:"Dar o nome e as falas, abertamente",to:'fim_depoimento',tema:'Transparência',q:'Testemunho'},
+            {r:"Entregar só os prints e pedir para não ser identificada",to:'fim_contradicao',tema:'Transparência',q:'Contradição'}]},
+        fim_cobranca:{fim:true,titulo:'Cobrança no microfone',t:[
+          "Helena levanta a mão e lê em voz alta o que a secretaria respondeu por escrito nos últimos dias. A sala aplaude. A secretaria diz que a reunião é para ouvir os pais, mas que a decisão não será revista.",
+          "Ela promete um segundo encontro e um plano de transição. Os pais saem sem a escola de volta, mas com uma data e um nome para cobrar."],
+          manchete:"Pais cobram secretaria por ter negado fim das turmas antes de confirmar",
+          linha:"A decisão foi anunciada horas antes da reunião; a secretaria promete novo encontro.",
+          tema:'Educação',q:'Participação',
+          alt:{q:'Decisão fechada',manchete:"Reunião para ouvir, decisão já tomada: o que sobra para as famílias?",linha:"A mesma reunião, agora com foco no que não estava em discussão."}},
+        fim_ato:{fim:true,titulo:'Ato na calçada',t:[
+          "No dia seguinte, quase duzentos pais e crianças ficam em frente à prefeitura com cartazes. A TV local transmite ao vivo e o prefeito diz que receberá uma comissão na semana seguinte.",
+          "A decisão não muda. Mas o assunto, que era um boato num grupo de mensagens, passa a ser pauta da cidade."],
+          manchete:"Pais protestam contra fim das séries finais em escolas municipais",
+          linha:"O prefeito promete receber uma comissão de famílias na semana seguinte.",
+          tema:'Educação',q:'Mobilização',
+          alt:{q:'Pressão',manchete:"Ato mobiliza famílias, mas decisão segue de pé",linha:"O mesmo protesto, agora com foco no que ele ainda não mudou."}},
+        fim_depoimento:{fim:true,titulo:'Mãe com nome',t:[
+          "A matéria sai à tarde, com a fala de Helena e os prints das respostas da secretaria. A prefeitura responde por nota, dizendo que o tema foi debatido com antecedência.",
+          "Helena recebe mensagens de apoio e também de mães que preferem a mudança. Ela percebe que o grupo não é tão unido quanto parecia."],
+          manchete:"Mãe diz ter ouvido da secretaria que não havia decisão; prefeitura rebate",
+          linha:"Famílias estão mobilizadas há uma semana contra a medida.",
+          tema:'Transparência',q:'Testemunho',
+          alt:{q:'Divergência',manchete:"Pais divididos: parte das famílias aceita a mudança",linha:"A mesma matéria, agora com foco no que a mobilização não mostrava."}},
+        fim_contradicao:{fim:true,titulo:'Falas lado a lado',t:[
+          "A repórter monta a matéria em duas colunas: o que a secretaria disse nos últimos dias e o que a prefeitura confirmou horas antes da reunião. A contradição fica à mostra sem precisar de adjetivo.",
+          "A prefeitura responde que as falas anteriores se referiam à fase de estudo. Helena não aparece no texto, mas os pais do grupo reconhecem os prints."],
+          manchete:"Secretaria negou, mas decisão já estava tomada: veja o que foi dito e quando",
+          linha:"A confirmação veio no site da prefeitura, horas antes de a reunião começar.",
+          tema:'Transparência',q:'Contradição',
+          alt:{q:'Anonimato',manchete:"Prints sem rosto: o que se ganha e o que se perde ao esconder a fonte",linha:"A mesma matéria, agora com foco em quem aparece e em quem fica de fora."}}
+      }
+    }
+  ];
+
+  /* ---------- estado ---------- */
+  function load(key){var v={};try{v=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){v={};}return v;}
+  function save(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}}
+  var found=load('vp2-finais'), rev=load('vp2-revelados');
+  function saveFound(sid,eid){
+    var a=found[sid]||(found[sid]=[]);
+    if(a.indexOf(eid)<0) a.push(eid);
+    save('vp2-finais',found);
+  }
+  function endingsOf(s){return Object.keys(s.nodes).filter(function(k){return s.nodes[k].fim;});}
+  var st={s:null,node:null,path:[],alt:false};
+  var hoje;
+  try{hoje=new Date().toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});}catch(e){hoje='';}
+  $$('.hoje').forEach(function(e){e.textContent=hoje;});
+
+  /* ---------- rotas ---------- */
+  var VIEWS=['capa','como','casos','mande'];
+  var body=$('#casos-body');
+  var cur=null;
+  function show(v){
+    if(VIEWS.indexOf(v)<0) v='capa';
+    if(v===cur) return;
+    cur=v;
+    $$('.view').forEach(function(el){el.hidden=el.getAttribute('data-view')!==v;});
+    $$('[data-nav]').forEach(function(a){
+      if(a.getAttribute('data-nav')===v) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
+    });
+    if(v==='casos') renderCasos();
+    toTop();
+  }
+  function fromHash(){var v='capa';try{v=(location.hash||'#capa').slice(1);}catch(e){}show(v);}
+  window.addEventListener('hashchange',fromHash);
+  /* links internos não dependem do hash: funcionam mesmo se o celular bloquear a mudança de endereço */
+  $$('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      var v=a.getAttribute('href').slice(1);
+      if(v==='casos'&&cur==='casos'){st.s=null;renderCasos();toTop();return;}
+      show(v);
+      try{if(location.hash!=='#'+v) location.hash=v;}catch(err){}
+    });
+  });
+
+  /* ---------- casos ---------- */
+  function squares(s){
+    var ends=endingsOf(s), got=found[s.id]||[];
+    return h('span',{class:'sqs',role:'img','aria-label':'Finais encontrados: '+got.length+' de '+ends.length},
+      ends.map(function(e){return h('span',{class:'sq'+(got.indexOf(e)>=0?' on':'')});}));
+  }
+  function renderCasos(){
+    if(st.s) renderReader(); else renderList();
+  }
+  function renderList(){
+    body.replaceChildren(
+      h('div',{class:'ficha-list'},
+        STORIES.map(function(s,i){
+          var total=endingsOf(s).length, got=(found[s.id]||[]).length;
+          return h('article',{class:'ficha'},
+            h('p',{class:'kicker'},'Caso 0'+(i+1)),
+            h('h3',{},s.titulo),
+            h('p',{class:'origem'},s.origem),
+            h('div',{class:'chips'},s.temas.map(function(t){return h('span',{class:'chip tema'},t);})),
+            h('div',{class:'prog'},squares(s),h('span',{class:'ptxt'},got+' de '+total+' finais')),
+            h('button',{class:'btn primary',type:'button',onclick:function(){openStory(s.id);}},'Ler o caso')
+          );
+        })
+      )
+    );
+  }
+  function openStory(id){
+    st.s=STORIES.filter(function(s){return s.id===id;})[0];
+    st.node='n0'; st.path=[]; st.alt=false;
+    renderReader(); toTop();
+  }
+  function choose(c){
+    st.path.push(c); st.node=c.to; st.alt=false;
+    renderReader(); toTop();
+  }
+  function tags(c){
+    return h('span',{class:'chips'},h('span',{class:'chip tema'},c.tema),h('span',{class:'chip q'},c.q));
+  }
+  function frontEl(n){
+    var a=st.alt?n.alt:null;
+    var q=a?a.q:n.q, man=a?a.manchete:n.manchete, fina=a?a.linha:n.linha;
+    return h('article',{class:'front'},
+      h('div',{class:'mast'},h('span',{class:'name'},'Gazeta da Esquina'),h('span',{class:'date'},hoje)),
+      h('p',{class:'stamp'},'Enquadramento · '+q),
+      h('h3',{class:'manchete'},man),
+      h('p',{class:'fina'},fina),
+      h('p',{class:'napauta'},h('span',{class:'lbl'},'Na pauta'),h('span',{class:'chip tema'},n.tema),h('span',{class:'chip q'},q))
+    );
+  }
+  function paraEl(parts){
+    return h('p',{},parts.map(function(p){
+      return typeof p==='string'?p:h('a',{href:p.h,target:'_blank',rel:'noopener noreferrer'},p.a);
+    }));
+  }
+  function revealBox(s){
+    var box=h('div',{class:'reveal',tabindex:'-1'});
+    function fill(){
+      if(!rev[s.id]){
+        box.replaceChildren(
+          h('p',{class:'kicker'},'Antes de sair'),
+          h('p',{},'Este caso partiu de uma notícia que realmente foi publicada. Quer ver qual?'),
+          h('div',{class:'actions'},h('button',{class:'btn primary',type:'button',onclick:function(){
+            rev[s.id]=true; save('vp2-revelados',rev); fill();
+            try{box.scrollIntoView({block:'start'});}catch(e){}
+            try{box.focus({preventScroll:true});}catch(e){}
+          }},'Descobrir a notícia de verdade')));
+        return;
+      }
+      var r=s.real;
+      box.replaceChildren(
+        h('p',{class:'kicker'},'Isto aconteceu de verdade'),
+        h('p',{class:'note'},'Os nomes, os lugares e os finais acima são inventados. O texto abaixo está como foi publicado.'),
+        h('article',{class:'news'},
+          h('div',{class:'src'},h('span',{},r.fonte),h('span',{class:'stamp'},'Notícia real')),
+          h('h3',{class:'manchete'},r.titulo),
+          r.fina?h('p',{class:'fina'},r.fina):null,
+          h('div',{class:'body'},r.paras.map(paraEl))
+        ),
+        h('div',{class:'actions'},h('a',{class:'btn primary',href:r.url,target:'_blank',rel:'noopener noreferrer'},'Ler a matéria original')),
+        h('p',{class:'note'},'Fonte: '+r.fonte.split(' · ')[0])
+      );
+    }
+    fill();
+    return box;
+  }
+  function renderReader(){
+    var s=st.s, n=s.nodes[st.node], idx=STORIES.indexOf(s)+1;
+    var wrap=h('div',{class:'reader',tabindex:'-1'});
+    wrap.append(h('button',{class:'link',type:'button',onclick:function(){st.s=null;renderCasos();toTop();}},'← Todos os casos'));
+
+    if(!n.fim){
+      wrap.append(h('p',{class:'kicker'},'Caso 0'+idx+' · Decisão '+(st.path.length+1)+' de 2'));
+      wrap.append(h('h3',{},s.titulo));
+      wrap.append(h('div',{class:'storytext'},n.t.map(function(p){return h('p',{},p);})));
+      wrap.append(h('p',{class:'ask'},'E agora, você pauta'));
+      wrap.append(h('div',{class:'choices'},n.c.map(function(c,i){
+        return h('button',{class:'choice',type:'button',onclick:function(){choose(c);}},
+          h('span',{class:'L','aria-hidden':'true'},'AB'.charAt(i)),
+          h('span',{},c.r));
+      })));
+      if(st.path.length){
+        wrap.append(h('div',{class:'trailbox'},
+          h('p',{class:'kicker'},'Sua pauta até aqui'),
+          h('ol',{class:'trail'},st.path.map(function(c){
+            return h('li',{},h('span',{class:'tt'},c.r),tags(c));
+          }))));
+      }
+    } else {
+      saveFound(s.id,st.node);
+      var ends=endingsOf(s), got=found[s.id]||[];
+      wrap.append(h('p',{class:'kicker'},'Caso 0'+idx+' · Final · '+n.titulo));
+      wrap.append(h('h3',{},s.titulo));
+      wrap.append(h('div',{class:'storytext'},n.t.map(function(p){return h('p',{},p);})));
+
+      var front=h('div',{class:'frontwrap','aria-live':'polite'},frontEl(n));
+      var tog=h('button',{class:'btn',type:'button',onclick:function(){
+        st.alt=!st.alt;
+        front.replaceChildren(frontEl(n));
+        tog.textContent=st.alt?'Voltar ao enquadramento original':'Ver com outro enquadramento';
+      }},'Ver com outro enquadramento');
+      wrap.append(h('p',{class:'kicker'},'A capa que a sua pauta produziu'));
+      wrap.append(front);
+      wrap.append(h('div',{class:'actions'},tog));
+      wrap.append(h('p',{class:'note'},'O fato e o tema continuam os mesmos. Muda o ângulo que a manchete escolhe mostrar.'));
+
+      wrap.append(revealBox(s));
+
+      wrap.append(h('div',{class:'trailbox'},
+        h('p',{class:'kicker'},'Suas decisões'),
+        h('ol',{class:'trail'},st.path.map(function(c){
+          return h('li',{},h('span',{class:'tt'},c.r),tags(c));
+        }))));
+
+      wrap.append(h('div',{class:'trailbox'},
+        h('p',{class:'kicker'},'Finais encontrados: '+got.length+' de '+ends.length),
+        h('ul',{class:'finds'},ends.map(function(e){
+          var ok=got.indexOf(e)>=0;
+          return h('li',{class:ok?'':'off'},h('span',{class:'sq'+(ok?' on':'')}),ok?s.nodes[e].titulo:'Final ainda escondido');
+        }))));
+
+      var acts=h('div',{class:'actions'},
+        h('button',{class:'btn primary',type:'button',onclick:function(){openStory(s.id);}},'Tentar outro caminho'));
+      var next=STORIES[idx];
+      if(next) acts.append(h('button',{class:'btn',type:'button',onclick:function(){openStory(next.id);}},'Próximo caso'));
+      wrap.append(acts);
+    }
+    body.replaceChildren(wrap);
+    try{wrap.focus({preventScroll:true});}catch(e){}
+  }
+
+  /* ---------- mande a sua ---------- */
+  var ids=['m-nome','m-local','m-fato','m-decisao','m-a','m-b','m-fim'];
+  var out=$('#m-out'), status=$('#m-status');
+  function val(id,fallback){var v=($('#'+id).value||'').trim();return v||fallback;}
+  function build(){
+    out.value=[
+      'RELATO PARA O VOCÊ PAUTA',
+      'Quem conta: '+val('m-nome','(anônimo)'),
+      'Onde: '+val('m-local','(preencha)'),
+      '',
+      'O que aconteceu:',
+      val('m-fato','(preencha)'),
+      '',
+      'Momento de decidir:',
+      val('m-decisao','(preencha)'),
+      '',
+      'Opção A: '+val('m-a','(preencha)'),
+      'Opção B: '+val('m-b','(preencha)'),
+      '',
+      'Como terminou na vida real:',
+      val('m-fim','(preencha)'),
+      '',
+      'Pode virar caso da zine, com nomes trocados: '+($('#m-ok').checked?'sim':'não')
+    ].join('\n');
+  }
+  ids.concat(['m-ok']).forEach(function(id){
+    $('#'+id).addEventListener('input',build);
+    $('#'+id).addEventListener('change',build);
+  });
+  $('#mande-form').addEventListener('submit',function(e){e.preventDefault();});
+  $('#m-copy').addEventListener('click',function(){
+    var done=function(){status.textContent='Texto copiado.';};
+    var fail=function(){out.focus();out.select();status.textContent='Selecione o texto e copie com o atalho do seu aparelho.';};
+    try{
+      navigator.clipboard.writeText(out.value).then(done,fail);
+    }catch(e){fail();}
+  });
+  $('#m-clear').addEventListener('click',function(){
+    ids.forEach(function(id){$('#'+id).value='';});
+    $('#m-ok').checked=true; status.textContent=''; build();
+  });
+  build();
+
+  fromHash();
+})();
+</script>
+
+</body></html>
